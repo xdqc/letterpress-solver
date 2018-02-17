@@ -1,7 +1,11 @@
 package swing_app;
 
 import DbConnector.DbConnector;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -9,15 +13,20 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.metal.MetalToggleButtonUI;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 
 public class LetterGridPanel extends JPanel implements GamesTableSelectedListener {
 
     private JPanel grid = new JPanel();
-
+    private JEditorPane definitionPanel = new JEditorPane();
     private JButton clear_btn;
     private JButton find_btn;
     private JToggleButton[] letter_btns = new JToggleButton[25];
@@ -67,7 +76,15 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
                 if (e.getClickCount() == 2) {
                     int row = ((JList) e.getSource()).getSelectedIndex();
                     String word = resultList.getModel().getElementAt(row);
-                    int res = JOptionPane.showConfirmDialog(null, "Remove " + word + " ?");
+
+                    SwingWorker<String, Void> getDefinitionWorker = new DefinitionWorker(word);
+                    getDefinitionWorker.execute();
+
+                    JScrollPane scrollPane = new JScrollPane(definitionPanel);
+                    scrollPane.setPreferredSize(new Dimension(600, 350));
+                    scrollPane.setMaximumSize(new Dimension(600, 350));
+
+                    int res = JOptionPane.showConfirmDialog(null, scrollPane,"Remove " + word + " ?", JOptionPane.OK_CANCEL_OPTION);
                     if (res == JOptionPane.OK_OPTION) {
                         SwingWorker<Void, Void> removeWordWorker = new RemoveWordWorker(word);
                         removeWordWorker.execute();
@@ -152,6 +169,10 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
                 .addComponent(scrollPane));
     }
 
+    /**
+     * Show toggle clickable game grid
+     * @param letters 25 letters of the grid
+     */
     @Override
     public void onGameRecordDoubleClicked(String letters) {
         grid.removeAll();
@@ -176,7 +197,7 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
                 }
             });
 
-            /*Keyboard shortcuts focus on grid*/
+            /*let keyboard shortcuts focus on grid*/
             letter_btns[i].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -191,12 +212,9 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
         find_btn.setEnabled(true);
         grid.requestFocusInWindow();
         updateUI();
-
     }
 
     private class FindWordsWorker extends SwingWorker<List<String>, Void> {
-
-
         @Override
         protected List<String> doInBackground() throws Exception {
             return DbConnector.findMatchingWords(freqG, freq);
@@ -226,7 +244,7 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
 
         private final String word;
 
-        public RemoveWordWorker(String word) {
+        private RemoveWordWorker(String word) {
             this.word = word;
         }
 
@@ -239,6 +257,54 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
         @Override
         protected void done() {
             System.out.println(word + " removed.");
+        }
+    }
+
+    private class DefinitionWorker extends SwingWorker<String, Void> {
+        private final String word;
+        private final String language = "en";
+        private final String app_id = "6b874550";
+        private final String app_key = "2f871c9f331916a1c34945113e15cc72";
+        Gson gson = new Gson();
+
+
+        private DefinitionWorker(String word) {
+            this.word = word.toLowerCase();
+        }
+
+        @Override
+        protected String doInBackground() throws Exception {
+            URL url = new URL("https://od-api.oxforddictionaries.com:443/api/v1/entries/" + language + "/" + word);
+            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+            urlConnection.setRequestProperty("Accept","application/json");
+            urlConnection.setRequestProperty("app_id",app_id);
+            urlConnection.setRequestProperty("app_key",app_key);
+
+            // read the output from the server
+            StringBuilder stringBuilder;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
+                stringBuilder = new StringBuilder();
+
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    stringBuilder.append(line);
+                }
+            } catch (Exception e){
+                System.out.println(e.getMessage());
+                return "Not found" + word + "in Oxford Dictionary";
+            }
+            System.out.println(stringBuilder.toString());
+            return stringBuilder.toString();
+        }
+
+        @Override
+        protected void done() {
+            //todo parseJson, display definition
+            try {
+                definitionPanel.setText(get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
