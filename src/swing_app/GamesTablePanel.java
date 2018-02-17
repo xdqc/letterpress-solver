@@ -5,6 +5,7 @@ import DbConnector.DbConnector;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -108,7 +109,7 @@ class GamesTablePanel extends JPanel {
         remove_btn.setEnabled(false);
         gameInfo_table = new JTable();
         gameInfo_table.setModel(new DefaultTableModel());
-        gameInfo_table.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        gameInfo_table.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
 
         JScrollPane scrollPane = new JScrollPane(gameInfo_table);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Available games"));
@@ -166,6 +167,8 @@ class GamesTablePanel extends JPanel {
                 gameInfo_table.setModel(tableModel);
                 gameInfo_table.getColumnModel().getColumn(0).setPreferredWidth(200);
                 gameInfo_table.getColumnModel().getColumn(1).setPreferredWidth(300);
+                //sort table by click header
+                gameInfo_table.setRowSorter(new TableRowSorter<>(gameInfo_table.getModel()));
 
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
