@@ -85,7 +85,10 @@ class GamesTablePanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount()==2){
+                    // index of the clicked row in view
                     int row = ((JTable)e.getSource()).rowAtPoint(e.getPoint());
+                    //return an index of the row in the model based on its index in the view
+                    row = gameInfo_table.getRowSorter().convertRowIndexToModel(row);
                     String letters = (String)gameInfo_table.getModel().getValueAt(row , 1);
                     //Pass selected game letters to
                     gamesTableSelectedListeners.forEach(g -> g.onGameRecordDoubleClicked(letters.replace(" ","")));
@@ -188,6 +191,7 @@ class GamesTablePanel extends JPanel {
         protected void done() {
             fetchGame_btn.setEnabled(true);
             addGame_btn.setEnabled(true);
+            fetchGame_btn.doClick();
         }
     }
 

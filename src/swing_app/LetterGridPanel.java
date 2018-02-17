@@ -151,7 +151,7 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
             letter_btns[i].setUI(new MetalToggleButtonUI(){
                 @Override
                 protected Color getSelectColor() {
-                    return new Color(180,220,250);
+                    return new Color(0xCCB4DCFA, true);
                 }
             });
 
