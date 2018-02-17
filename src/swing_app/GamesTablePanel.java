@@ -213,6 +213,7 @@ class GamesTablePanel extends JPanel {
         protected void done() {
             addGame_btn.setEnabled(true);
             fetchGame_btn.setEnabled(true);
+            fetchGame_btn.doClick();
         }
     }
 }

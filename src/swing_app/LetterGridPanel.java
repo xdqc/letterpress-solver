@@ -8,14 +8,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.metal.MetalToggleButtonUI;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.awt.event.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 
@@ -79,6 +74,32 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
                     }
                 }
             }
+        });
+
+        /*Keyboard shortcuts*/
+        grid.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {}
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int i1 = e.getKeyCode();
+                if (i1 == KeyEvent.VK_ENTER) {
+                    find_btn.doClick();
+                } else if (i1 == KeyEvent.VK_ESCAPE) {
+                    for (JToggleButton letter_btn : letter_btns) {
+                        letter_btn.setSelected(false);
+                    }
+                } else if (i1 >= 'A' && i1<= 'Z') {
+                    for (JToggleButton letter_btn : letter_btns) {
+                        if (letter_btn.getText().charAt(0) == i1){
+                            letter_btn.setSelected(!letter_btn.isSelected());
+                        }
+                    }
+                }
+            }
+            @Override
+            public void keyReleased(KeyEvent e) {}
         });
     }
 
@@ -155,29 +176,12 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
                 }
             });
 
-            /*Keyboard shortcuts*/
-            letter_btns[i].addKeyListener(new KeyListener() {
+            /*Keyboard shortcuts focus on grid*/
+            letter_btns[i].addActionListener(new ActionListener() {
                 @Override
-                public void keyTyped(KeyEvent e) {}
-
-                @Override
-                public void keyPressed(KeyEvent e) {
-                    switch (e.getKeyCode()){
-                        case KeyEvent.VK_ENTER:
-                            find_btn.doClick();
-                            break;
-                        case KeyEvent.VK_ESCAPE:
-                        case KeyEvent.VK_J:
-                        case KeyEvent.VK_C:
-                            clear_btn.doClick();
-                            break;
-                        default:
-                            break;
-                    }
+                public void actionPerformed(ActionEvent e) {
+                    grid.requestFocusInWindow();
                 }
-
-                @Override
-                public void keyReleased(KeyEvent e) {}
             });
 
             grid.add(letter_btns[i]);
@@ -185,9 +189,9 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
 
         clear_btn.setEnabled(true);
         find_btn.setEnabled(true);
-
-
+        grid.requestFocusInWindow();
         updateUI();
+
     }
 
     private class FindWordsWorker extends SwingWorker<List<String>, Void> {
