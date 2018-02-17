@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.metal.MetalToggleButtonUI;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -25,7 +26,7 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
     private JButton clear_btn;
     private JButton find_btn;
     private JToggleButton[] letter_btns = new JToggleButton[25];
-    private final JList<String> resultList;
+    private final JList<String> resultList = new JList<>();
 
     private Map<Character, Integer> freq = new TreeMap<>();
     private Map<Character, Integer> freqG = new TreeMap<>();
@@ -33,19 +34,6 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
 
 
     public LetterGridPanel() {
-        clear_btn = new JButton("Clear selected");
-        find_btn = new JButton("Find words!");
-
-        clear_btn.setEnabled(false);
-        find_btn.setEnabled(false);
-        grid.setLayout(new GridLayout(5, 5));
-        grid.setBorder(new EmptyBorder(0, 40, 0, 40));
-
-        resultList = new JList<>();
-        resultList.setVisibleRowCount(20);
-        resultList.setVisibleRowCount(20);
-        resultList.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 16));
-        resultList.setFixedCellWidth(300);
 
         buildUI();
 
@@ -95,14 +83,26 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
     }
 
     private void buildUI() {
+        clear_btn = new JButton("Clear selected");
+        find_btn = new JButton("Find words!");
+
+        clear_btn.setEnabled(false);
+        find_btn.setEnabled(false);
+        grid.setLayout(new GridLayout(5, 5));
+        grid.setBorder(new EmptyBorder(0, 60, 0, 60));
+
+        resultList.setVisibleRowCount(20);
+        resultList.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 16));
+        resultList.setFixedCellWidth(300);
+
         JPanel btns = new JPanel();
         btns.add(clear_btn);
         btns.add(Box.createRigidArea(new Dimension(10, 0)));
         btns.add(find_btn);
 
         JScrollPane scrollPane = new JScrollPane(resultList);
-        scrollPane.setPreferredSize(new Dimension(350, 300));
-        scrollPane.setMaximumSize(new Dimension(350, 300));
+        scrollPane.setPreferredSize(new Dimension(350, 350));
+        scrollPane.setMaximumSize(new Dimension(350, 350));
 
         JPanel wordResultPanel = new JPanel();
         wordResultPanel.setPreferredSize(new Dimension(350, 400));
@@ -122,13 +122,13 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(btns)
                         .addComponent(grid))
-                .addComponent(wordResultPanel));
+                .addComponent(scrollPane));
 
         layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addComponent(btns)
                     .addComponent(grid))
-                .addComponent(wordResultPanel));
+                .addComponent(scrollPane));
     }
 
     @Override
@@ -147,7 +147,13 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
             letter_btns[i] = new JToggleButton(String.valueOf(letters.charAt(i)));
             letter_btns[i].setFont(new Font(Font.MONOSPACED, Font.BOLD, 30));
             letter_btns[i].setBackground(Color.white);
-            letter_btns[i].setForeground(Color.DARK_GRAY);
+            letter_btns[i].setForeground(Color.darkGray);
+            letter_btns[i].setUI(new MetalToggleButtonUI(){
+                @Override
+                protected Color getSelectColor() {
+                    return new Color(180,220,250);
+                }
+            });
 
             /*Keyboard shortcuts*/
             letter_btns[i].addKeyListener(new KeyListener() {
