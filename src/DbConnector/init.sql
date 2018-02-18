@@ -11,7 +11,7 @@ create table db_english_grids
 )
 ;
 
-create table db_english_words
+create table db_english_letterpress_words
 (
   id int auto_increment
     primary key,
