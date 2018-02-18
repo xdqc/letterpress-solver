@@ -50,7 +50,6 @@ public class LetterpressSolverGUI extends JFrame {
 
     private void start() {
         customFont = loadFont();
-        DbConnector.initialze("web/WEB-INF/localmysql.properties");
         setTitle("Letterpress Solver");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);

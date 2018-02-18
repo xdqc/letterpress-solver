@@ -17,9 +17,8 @@ import java.util.*;
 
 public class DbConnector {
     private static Properties dbProps = new Properties();
-
-    public static void initialze(String filePath) {
-        try (FileInputStream fIn = new FileInputStream(filePath)) {
+    static {
+        try (FileInputStream fIn = new FileInputStream("web/WEB-INF/localmysql.properties")) {
             dbProps.load(fIn);
         } catch (IOException e) {
             e.printStackTrace();
