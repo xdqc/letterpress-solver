@@ -381,16 +381,23 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
                 doc.insertBeforeEnd(doc.getElement("def"), "<h4>" + lexCategory + "</h4><ul id='" + lexCategory + "'><ul>");
                 JsonArray entries = ((JsonObject) lex).get("entries").getAsJsonArray();
                 for (JsonElement entry : entries) {
-                    JsonArray senses = ((JsonObject) entry).get("senses").getAsJsonArray();
                     //if no definition, use derivation
-                    if (senses.size() == 0) {
+                    if (!((JsonObject) entry).has("senses")){
                         String derivation = ((JsonObject) lex).get("derivativeOf").getAsJsonArray().get(1).getAsJsonObject().get("text").getAsString();
-                        doc.insertBeforeStart(doc.getElement(lexCategory), "<li>" + derivation + "</li>");
+                        doc.insertBeforeEnd(doc.getElement(lexCategory), "<li>" + derivation + "</li>");
                     } else {
+                        JsonArray senses = ((JsonObject) entry).get("senses").getAsJsonArray();
                         // display each definition
                         for (JsonElement sense : senses) {
                             String definition = ((JsonObject) sense).get("definitions").getAsJsonArray().get(0).getAsString();
-                            doc.insertBeforeStart(doc.getElement(lexCategory), "<li>" + definition + "</li>");
+                            doc.insertBeforeEnd(doc.getElement(lexCategory), "<li>" + definition + "</li>");
+                            // also display sub-senses
+                            if (((JsonObject) sense).has("subsenses")){
+                                for (JsonElement subsense : ((JsonObject) sense).get("subsenses").getAsJsonArray()) {
+                                    definition = ((JsonObject) subsense).get("definitions").getAsJsonArray().get(0).getAsString();
+                                    doc.insertBeforeEnd(doc.getElement(lexCategory), "<li>" + definition + "</li>");
+                                }
+                            }
                         }
                     }
                 }
