@@ -81,8 +81,8 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
                     getDefinitionWorker.execute();
 
                     JScrollPane scrollPane = new JScrollPane(definitionPanel);
-                    scrollPane.setPreferredSize(new Dimension(600, 350));
-                    scrollPane.setMaximumSize(new Dimension(600, 350));
+                    scrollPane.setPreferredSize(new Dimension(600, 400));
+                    scrollPane.setMaximumSize(new Dimension(600, 600));
 
                     String[] options = {"Remove [" + word + "]", "Cancel"};
                     int res = JOptionPane.showOptionDialog(null, scrollPane, "Remove " + word + " ?",
@@ -382,8 +382,8 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
                 JsonArray entries = ((JsonObject) lex).get("entries").getAsJsonArray();
                 for (JsonElement entry : entries) {
                     //if no definition, use derivation
-                    if (!((JsonObject) entry).has("senses")){
-                        String derivation = ((JsonObject) lex).get("derivativeOf").getAsJsonArray().get(1).getAsJsonObject().get("text").getAsString();
+                    if (!((JsonObject) entry).has("senses")) {
+                        String derivation = ((JsonObject) lex).get("derivativeOf").getAsJsonArray().get(0).getAsJsonObject().get("text").getAsString();
                         doc.insertBeforeEnd(doc.getElement(lexCategory), "<li>" + derivation + "</li>");
                     } else {
                         JsonArray senses = ((JsonObject) entry).get("senses").getAsJsonArray();
@@ -392,7 +392,7 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
                             String definition = ((JsonObject) sense).get("definitions").getAsJsonArray().get(0).getAsString();
                             doc.insertBeforeEnd(doc.getElement(lexCategory), "<li>" + definition + "</li>");
                             // also display sub-senses
-                            if (((JsonObject) sense).has("subsenses")){
+                            if (((JsonObject) sense).has("subsenses")) {
                                 for (JsonElement subsense : ((JsonObject) sense).get("subsenses").getAsJsonArray()) {
                                     definition = ((JsonObject) subsense).get("definitions").getAsJsonArray().get(0).getAsString();
                                     doc.insertBeforeEnd(doc.getElement(lexCategory), "<li>" + definition + "</li>");
@@ -401,12 +401,20 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
                         }
                     }
                 }
+                // remove the empty <ul> child in <ul id='lexCategory'>
+                doc.removeElement(doc.getElement(lexCategory).getElement(0));
             }
+
             JsonObject firstEntry = lexical.get(0).getAsJsonObject().get("entries").getAsJsonArray().get(0).getAsJsonObject();
             if (firstEntry.has("etymologies")) {
                 String etymology = firstEntry.get("etymologies").getAsJsonArray().get(0).getAsString();
                 doc.insertBeforeEnd(doc.getElement("def"), "<h4>Origin</h4><ul><li>" + etymology + "<ul></li>");
             }
+            String pronunciation = lexical.get(0).getAsJsonObject().get("pronunciations").getAsJsonArray().get(0).getAsJsonObject()
+                    .get("phoneticSpelling").getAsString();
+            doc.insertAfterEnd(doc.getElement("title"), "/" + pronunciation + "/");
+
+            System.out.println(definitionPanel.getText());
         }
 
         private void parseInflection() throws InterruptedException, ExecutionException {
@@ -421,7 +429,7 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
             String apiProvider = json.get("metadata").getAsJsonObject().get("provider").getAsString();
             definitionPanel.setText("");
             definitionPanel.setContentType("text/html");
-            definitionPanel.setText("<html><head></head><body><h2>" + word + "</h2>from the root word <strong>" + inflectionOf + "</strong>" +
+            definitionPanel.setText("<html><head><style>body{font-family:SANS-SERIF}</style></head><body><h2 id='title'>" + word + "</h2>from the root word <strong>" + inflectionOf + "</strong>" +
                     "<div id='def'></div><hr><p>Definition powered by " + apiProvider + "</p></body></html>");
 
             /*chain of api query to get the definition of root word*/
