@@ -3,11 +3,12 @@
     <output-path>$PROJECT_DIR$/out/artifacts/LetterpressSolver_jar</output-path>
     <root id="archive" name="LetterpressSolver.jar">
       <element id="module-output" name="LetterpressSolver" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/web/WEB-INF/lib/gson-2.8.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/web/WEB-INF/lib/jooq-3.10.2.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/web/WEB-INF/lib/jooq-codegen-3.10.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/web/WEB-INF/lib/jooq-meta-3.10.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/web/WEB-INF/lib/jooq-codegen-3.10.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/web/WEB-INF/lib/mysql-connector-java-5.1.45-bin.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/web/WEB-INF/lib/postgresql-42.1.4.jar" path-in-jar="/" />
+      <element id="library" level="project" name="mysql-connector-java-5.1.45-bin" />
     </root>
   </artifact>
 </component>

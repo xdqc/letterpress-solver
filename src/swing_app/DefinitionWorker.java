@@ -128,14 +128,19 @@ public class DefinitionWorker extends SwingWorker<String, Void> {
             doc.removeElement(doc.getElement(lexCategory).getElement(0));
         }
 
+        // show word origin
         JsonObject firstEntry = lexical.get(0).getAsJsonObject().get("entries").getAsJsonArray().get(0).getAsJsonObject();
         if (firstEntry.has("etymologies")) {
             String etymology = firstEntry.get("etymologies").getAsJsonArray().get(0).getAsString();
             doc.insertBeforeEnd(doc.getElement("def"), "<h4>Origin</h4><ul><li>" + etymology + "<ul></li>");
         }
-        String pronunciation = lexical.get(0).getAsJsonObject().get("pronunciations").getAsJsonArray().get(0).getAsJsonObject()
-                .get("phoneticSpelling").getAsString();
-        doc.insertAfterEnd(doc.getElement("title"), "/" + pronunciation + "/");
+
+        // show word pronunciation
+        if (lexical.get(0).getAsJsonObject().has("pronunciations")){
+            String pronunciation = lexical.get(0).getAsJsonObject().get("pronunciations").getAsJsonArray().get(0).getAsJsonObject()
+                    .get("phoneticSpelling").getAsString();
+            doc.insertAfterEnd(doc.getElement("title"), "/" + pronunciation + "/");
+        }
     }
 
     /**

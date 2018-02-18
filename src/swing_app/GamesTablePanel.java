@@ -59,7 +59,11 @@ class GamesTablePanel extends JPanel {
 
             if (result == JOptionPane.OK_OPTION){
                 newPlayerName = playerName.getText();
-                newLetterGrid = letterGrid.getText().toUpperCase();
+                newLetterGrid = letterGrid.getText().replace(" ","").toUpperCase();
+                if (!newLetterGrid.matches("^[A-Z]{25}$")){
+                    JOptionPane.showMessageDialog(null, "Please enter 25 letters (can contain space)");
+                    return;
+                }
                 fetchGame_btn.setEnabled(false);
                 addGame_btn.setEnabled(false);
                 remove_btn.setEnabled(false);
@@ -144,7 +148,7 @@ class GamesTablePanel extends JPanel {
         );
     }
 
-    public void addGamesTableSelectedListener(GamesTableSelectedListener listener){
+    void addGamesTableSelectedListener(GamesTableSelectedListener listener){
         this.gamesTableSelectedListeners.add(listener);
     }
 
@@ -183,7 +187,8 @@ class GamesTablePanel extends JPanel {
 
         @Override
         protected Void doInBackground() throws Exception {
-            DbConnector.addNewGameToDB(newPlayerName, newLetterGrid);
+            // intersperse space between 5 letters
+            DbConnector.addNewGameToDB(newPlayerName, newLetterGrid.replaceAll("(.{5})", "$1 "));
             return null;
         }
 

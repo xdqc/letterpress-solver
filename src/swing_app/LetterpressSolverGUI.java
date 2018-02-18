@@ -1,7 +1,5 @@
 package swing_app;
 
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -34,7 +32,6 @@ public class LetterpressSolverGUI extends JFrame {
         new LetterpressSolverGUI().start();
     }
 
-    @Nullable
     private Font loadFont() {
         InputStream is = LetterpressSolverGUI.class.getResourceAsStream("/Fonts/consola.ttf");
         try {
