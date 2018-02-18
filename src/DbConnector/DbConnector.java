@@ -143,7 +143,7 @@ public class DbConnector {
 
     /**
      *
-     * @param gridLetters
+     * @param gridLetters remove game by grid letters
      */
     public static void removeGame(String gridLetters) {
         try (Connection conn = DriverManager.getConnection(dbProps.getProperty("url"), dbProps)) {

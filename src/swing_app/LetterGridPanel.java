@@ -25,8 +25,8 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
     private JToggleButton[] letter_btns = new JToggleButton[25];
     private final JList<String> resultList = new JList<>();
 
-    private Map<Character, Integer> freq = new TreeMap<>();
-    private Map<Character, Integer> freqG = new TreeMap<>();
+    private Map<Character, Integer> freq = new TreeMap<>();     // selected letters (lower bound of query)
+    private Map<Character, Integer> freqG = new TreeMap<>();    // grid letters (upper bound of query)
     private List<String> wordResult = new ArrayList<>();
     private boolean ctrlPressing = false;
     private boolean isLetterSelected;
@@ -64,7 +64,7 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
             findWordsWorker.execute();
         });
 
-        /*Remove selected word from dictionary*/
+        /*Display definition panel, opt to remove selected word from dictionary*/
         resultList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -82,6 +82,7 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
                     String[] options = {"Remove [" + word + "]", "Cancel"};
                     int res = JOptionPane.showOptionDialog(null, scrollPane, "Remove " + word + " ?",
                             JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
+
                     if (res == JOptionPane.OK_OPTION) {
                         SwingWorker<Void, Void> removeWordWorker = new RemoveWordWorker(word);
                         removeWordWorker.execute();
@@ -189,6 +190,7 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
         }
 
         for (int i = 0; i < letter_btns.length; i++) {
+            // put grid letter frequency to map
             int count = freqG.getOrDefault(letters.charAt(i), 0);
             freqG.put(letters.charAt(i), ++count);
 
@@ -204,12 +206,7 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
             });
 
             /*let keyboard shortcuts focus on grid*/
-            letter_btns[i].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    grid.requestFocusInWindow();
-                }
-            });
+            letter_btns[i].addActionListener(e -> grid.requestFocusInWindow());
 
             /*toggle letter button on mouse over*/
             int finalI = i;
@@ -252,7 +249,7 @@ public class LetterGridPanel extends JPanel implements GamesTableSelectedListene
 
 
     /**
-     * Find matched words
+     * Find matching words
      */
     private class FindWordsWorker extends SwingWorker<List<String>, Void> {
         @Override

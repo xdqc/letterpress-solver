@@ -72,9 +72,7 @@ public class InjectDictionary {
             String sql = convert(conn);
             stmt.executeUpdate(sql);
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             //finally block used to close resources

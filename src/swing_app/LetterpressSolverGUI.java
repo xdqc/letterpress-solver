@@ -1,6 +1,5 @@
 package swing_app;
 
-import DbConnector.DbConnector;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
