@@ -1,5 +1,5 @@
 # letterpress-solver
-A swing app using jdbc connecting with mysql db
+Better weapon does not guarantee winning. Keep virginity of critical letters is key to not losing.
 
 ![alt swing UI](https://github.com/xdqc/letterpress-solver/blob/master/ls_ScreenShot_1.PNG "swing UI")
 
