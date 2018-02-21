@@ -79,7 +79,10 @@ class GamesTablePanel extends JPanel {
             addGame_btn.setEnabled(false);
             fetchGame_btn.setEnabled(false);
             int row = gameInfo_table.getSelectedRow();
+            //return an index of the row in the model based on its index in the view
+            row = gameInfo_table.getRowSorter().convertRowIndexToModel(row);
             String letters = (String)gameInfo_table.getModel().getValueAt(row , 1);
+
             SwingWorker<Void, Void> dbRemoveWorker = new DBRemoveWorker(letters);
             dbRemoveWorker.execute();
         });
