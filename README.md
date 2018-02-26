@@ -1,5 +1,8 @@
 # letterpress-solver
-Better weapon does not guarantee winning. Keep virginity of critical letters is key to not losing.
+* Sharper weapon does not guarantee winning every game. 
+* Position of base is critical, which should be faraway from cluster of rare letters.
+* On starting, put necessary resources on penetrating opponents' territor, while exceeding resources on solidifying own fortress.
+* Keep virginity of rare letters to keep undefeated.
 
 ![alt swing UI](https://github.com/xdqc/letterpress-solver/blob/master/ls_ScreenShot_1.PNG "swing UI")
 
